@@ -2,6 +2,10 @@
  * The Chip8 CPU - The brain of the emulator
  */
 
+import { MemoryBus } from './mbus'
+
+const SINGLE_INDEX = 0x00
+
 export class CPU {
   private static _instance: CPU
 
@@ -12,7 +16,7 @@ export class CPU {
   private readonly index: Uint16Array = new Uint16Array(0x01)
 
   // single 16-bit register which stores address of current program instruction
-  private readonly programCounter: Uint16Array = new Uint16Array(0x01)
+  private readonly _programCounter: Uint16Array = new Uint16Array(0x01)
 
   // used with the op CALL to store the address of the current instruction (PC)
   // we will rely on this when the RET operation is executed to return to this address
@@ -29,9 +33,7 @@ export class CPU {
   // same as the delay timer. Emits a single tone when timer reaches 0
   private readonly soundTimer: Uint8Array = new Uint8Array(0x01)
 
-  private constructor () {
-    this.listen()
-  }
+  private constructor () { }
 
   static get instance (): CPU {
     if (CPU._instance === undefined) {
@@ -41,11 +43,30 @@ export class CPU {
     return CPU._instance
   }
 
-  private listen (): void {
-    console.log('Listening')
+  get programCounter (): number {
+    return this._programCounter[SINGLE_INDEX]
+  }
+
+  set programCounter (address: number) {
+    this._programCounter[SINGLE_INDEX] = address
   }
 
   get status (): string {
     return 'Am CPU'
+  }
+
+  public cycle (): void {
+    console.log('Begin Cycling...')
+
+    const memory = MemoryBus.instance.memory
+    while (memory[this._programCounter[SINGLE_INDEX]] !== 0x00) {
+      // instruction
+      console.log(`LINE ${this._programCounter[SINGLE_INDEX]}: ${memory[this._programCounter[SINGLE_INDEX]]}`)
+
+      // increment
+      this._programCounter[SINGLE_INDEX] += 1
+    }
+
+    console.log('Program Exited')
   }
 }

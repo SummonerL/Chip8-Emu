@@ -27,16 +27,14 @@ export class Emulator {
     const romReadStream = fs.createReadStream(path.resolve('./game_roms/tank.ch8'))
 
     romReadStream.on('data', (chunk: Buffer) => {
-      console.log('data :', chunk, chunk.length)
-
       MemoryBus.instance.loadProgram(chunk)
     })
   }
 
-  get status (): string {
-    return 'Am an Emulator'
+  get created (): string {
+    return 'Emulator Initialized...'
   }
 }
 
 const emuStart: Emulator = Emulator.instance
-console.log(emuStart.status)
+console.log(emuStart.created)
