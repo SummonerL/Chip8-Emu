@@ -12,6 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^18.7.13",
+    "@types/node-static": "^0.7.7",
     "@typescript-eslint/eslint-plugin": "^5.35.1",
     "eslint": "^8.22.0",
     "eslint-config-standard-with-typescript": "^22.0.0",
@@ -19,5 +20,8 @@
     "eslint-plugin-n": "^15.2.5",
     "eslint-plugin-promise": "^6.0.1",
     "typescript": "^4.8.2"
+  },
+  "dependencies": {
+    "node-static": "^0.7.11"
   }
 }

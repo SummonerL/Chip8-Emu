@@ -30,7 +30,7 @@ export class CPU {
   // inactive when at 0. Otherwise, the value will decrement at a rate of 60hz (roughly 16.6 ms)
   private readonly delayTimer: Uint8Array = new Uint8Array(0x01)
 
-  // same as the delay timer. Emits a single tone when timer reaches 0
+  // same as the delay timer. Emits a single tone as long as the value is non-Zero
   private readonly soundTimer: Uint8Array = new Uint8Array(0x01)
 
   private constructor () { }
@@ -55,16 +55,34 @@ export class CPU {
     return 'Am CPU'
   }
 
+  private fetch (): number {
+    return MemoryBus.instance.memory[this._programCounter[SINGLE_INDEX]]
+  }
+
+  private decode (instruction: number): void {
+    //
+  }
+
+  private increment (): void {
+    this._programCounter[SINGLE_INDEX] += 1
+  }
+
   public cycle (): void {
     console.log('Begin Cycling...')
 
     const memory = MemoryBus.instance.memory
+
     while (memory[this._programCounter[SINGLE_INDEX]] !== 0x00) {
       // instruction
-      console.log(`LINE ${this._programCounter[SINGLE_INDEX]}: ${memory[this._programCounter[SINGLE_INDEX]]}`)
+      const address: number = this._programCounter[SINGLE_INDEX]
+      const instruction: number = this.fetch()
+
+      console.log(`LINE ${address}: ${instruction}`)
+
+      this.decode(instruction)
 
       // increment
-      this._programCounter[SINGLE_INDEX] += 1
+      this.increment()
     }
 
     console.log('Program Exited')

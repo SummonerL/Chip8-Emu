@@ -6,12 +6,39 @@ import { CPU } from './cpu'
 // chip-8 reserves 0x200 - 0xFFF for program instructions
 const PROGRAM_START_ADDRESS = 0x200
 
+// chip-8 preloads a fontset into memory for use by the program + index register
+// we'll save this to 0x50 - 0x09F
+const FONTSET_START_ADDRESS = 0x50
+const FONTSET: Uint8Array = new Uint8Array([
+  0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+  0x20, 0x60, 0x20, 0x20, 0x70, // 1
+  0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+  0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+  0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+  0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+  0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+  0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+  0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+  0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+  0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+  0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+  0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+  0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+  0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+  0xF0, 0x80, 0xF0, 0x80, 0x80 // F
+])
+
 export class MemoryBus {
   private static _instance: MemoryBus
 
   private readonly _memory: Uint8Array = new Uint8Array(0xFFF)
 
-  private constructor () { }
+  private constructor () {
+    // load fontset into memory
+    FONTSET.forEach((fontByte: number, index) => {
+      this._memory[FONTSET_START_ADDRESS + index] = fontByte
+    })
+  }
 
   static get instance (): MemoryBus {
     if (MemoryBus._instance === undefined) {
@@ -31,13 +58,10 @@ export class MemoryBus {
 
   // load program into memory
   public loadProgram (buffer: Buffer): boolean {
-    let currentAddress = PROGRAM_START_ADDRESS
+    buffer.forEach((byte: number, index: number) => {
+      this.memory[PROGRAM_START_ADDRESS + index] = byte
 
-    buffer.forEach((byte: number) => {
-      this.memory[currentAddress] = byte
-      currentAddress++
-
-      if (currentAddress > 0xFFF) {
+      if (PROGRAM_START_ADDRESS + index > 0xFFF) {
         return false
       }
     })
