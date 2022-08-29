@@ -1,14 +1,10 @@
 /**
  * Chip-8 Emulator - Main Class
  */
-import * as fs from 'fs'
-import * as path from 'path'
-import { MemoryBus } from './mbus'
+import { MemoryBus } from '.'
 
 export class Emulator {
   private static _instance: Emulator
-
-  private readonly memory: Int8Array = new Int8Array(0xFFF)
 
   private constructor () {
     this.loadRomFile()
@@ -23,11 +19,16 @@ export class Emulator {
   }
 
   public loadRomFile (): void {
-    const romReadStream = fs.createReadStream(path.resolve('./game_roms/tank.ch8'))
+    const xhr: XMLHttpRequest = new XMLHttpRequest()
 
-    romReadStream.on('data', (chunk: Buffer) => {
-      MemoryBus.instance.loadProgram(chunk)
+    xhr.open('get', './IBM Logo.ch8', true)
+    xhr.addEventListener('load', () => {
+      const fileChunk: Uint8Array = new Uint8Array(xhr.response)
+
+      MemoryBus.instance.loadProgram(fileChunk)
     })
+    xhr.responseType = 'arraybuffer'
+    xhr.send()
   }
 
   get created (): string {

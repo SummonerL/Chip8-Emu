@@ -2,7 +2,7 @@
  * The Chip8 CPU - The brain of the emulator
  */
 
-import { MemoryBus } from './mbus'
+import { MemoryBus } from '.'
 
 const SINGLE_INDEX = 0x00
 
@@ -51,12 +51,10 @@ export class CPU {
     this._programCounter[SINGLE_INDEX] = address
   }
 
-  get status (): string {
-    return 'Am CPU'
-  }
-
-  private fetch (): number {
-    return MemoryBus.instance.memory[this._programCounter[SINGLE_INDEX]]
+  private fetch (): string {
+    const part1: string = MemoryBus.instance.memory[this._programCounter[SINGLE_INDEX]].toString(16)
+    const part2: string = MemoryBus.instance.memory[this._programCounter[SINGLE_INDEX] + 1].toString(16)
+    return part1 + part2
   }
 
   private decode (instruction: number): void {
@@ -64,24 +62,22 @@ export class CPU {
   }
 
   private increment (): void {
-    this._programCounter[SINGLE_INDEX] += 1
+    this._programCounter[SINGLE_INDEX] += 2
   }
 
   public cycle (): void {
     console.log('Begin Cycling...')
 
-    const memory = MemoryBus.instance.memory
-
-    while (memory[this._programCounter[SINGLE_INDEX]] !== 0x00) {
+    while (this._programCounter[SINGLE_INDEX] <= MemoryBus.instance.programLastAddress) {
       // instruction
       const address: number = this._programCounter[SINGLE_INDEX]
-      const instruction: number = this.fetch()
+      const instruction: string = this.fetch()
 
       console.log(`LINE ${address}: ${instruction}`)
 
-      this.decode(instruction)
+      // this.decode(instruction)
 
-      // increment
+      // increment by 2
       this.increment()
     }
 

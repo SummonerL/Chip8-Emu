@@ -12,13 +12,7 @@ export class WebServer {
   private readonly _server: http.Server
 
   private constructor () {
-    const files = new Server('./')
-
-    this._server = http.createServer((req, res) => {
-      files.serve(req, res)
-    })
-
-    this._server.listen(SERVER_PORT)
+    this._server = this.initializeServer()
   }
 
   static get instance (): WebServer {
@@ -35,5 +29,17 @@ export class WebServer {
 
   get status (): string {
     return 'Listening...'
+  }
+
+  initializeServer (): http.Server {
+    const files = new Server('./frontend_build/')
+
+    const server: http.Server = http.createServer((req, res) => {
+      files.serve(req, res)
+    })
+
+    server.listen(SERVER_PORT)
+
+    return server
   }
 }

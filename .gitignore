@@ -1,5 +1,10 @@
 # npm
 node_modules
 
-# typescript
-build
+# webpack
+/frontend_build/*.js
+/frontend_build/*.html
+/frontend_build/*.map
+
+/backend_build/*.js
+/backend_build/*.map

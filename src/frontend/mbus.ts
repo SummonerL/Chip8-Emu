@@ -1,7 +1,7 @@
 /**
  * The Chip8 Memory Bus - Addresses 0x000 to 0xFFF
  */
-import { CPU } from './cpu'
+import { CPU } from '.'
 
 // chip-8 reserves 0x200 - 0xFFF for program instructions
 const PROGRAM_START_ADDRESS = 0x200
@@ -33,6 +33,9 @@ export class MemoryBus {
 
   private readonly _memory: Uint8Array = new Uint8Array(0xFFF)
 
+  // for debugging purposes. We can use this to log the memory at program location 0x200 -> X
+  private _programLastAddress: number
+
   private constructor () {
     // load fontset into memory
     FONTSET.forEach((fontByte: number, index) => {
@@ -48,23 +51,32 @@ export class MemoryBus {
     return MemoryBus._instance
   }
 
-  get status (): string {
-    return 'Am Memory Bus'
-  }
-
   get memory (): Uint8Array {
     return this._memory
   }
 
+  get programLastAddress (): number {
+    return this._programLastAddress
+  }
+
+  set programLastAddress (address: number) {
+    this._programLastAddress = address
+  }
+
   // load program into memory
-  public loadProgram (buffer: Buffer): boolean {
+  public loadProgram (buffer: Uint8Array): boolean {
     buffer.forEach((byte: number, index: number) => {
       this.memory[PROGRAM_START_ADDRESS + index] = byte
+
+      this.programLastAddress = PROGRAM_START_ADDRESS + index
 
       if (PROGRAM_START_ADDRESS + index > 0xFFF) {
         return false
       }
     })
+
+    // log the data from 0x200 -> Last address
+    console.log(this.memory.subarray(PROGRAM_START_ADDRESS, this.programLastAddress + 1))
 
     // set the program counter to 0x200
     CPU.instance.programCounter = PROGRAM_START_ADDRESS
