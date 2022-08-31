@@ -9,6 +9,6 @@
     display: inline-block;
 }
 
-.pixel .on {
+.pixel.on {
     background-color: #000;
 }

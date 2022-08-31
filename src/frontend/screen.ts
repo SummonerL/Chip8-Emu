@@ -37,6 +37,12 @@ export class Screen {
     }
   }
 
+  public clearDisplay (): void {
+    this._pixels.forEach(element => {
+      element.classList.remove('on')
+    })
+  }
+
   get created (): string {
     return 'Screen Initialized'
   }

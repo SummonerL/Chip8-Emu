@@ -2,7 +2,7 @@
  * The Chip8 CPU - The brain of the emulator
  */
 
-import { MemoryBus, Screen } from '.'
+import { MemoryBus, Screen, decode, Instruction } from '.'
 
 const SINGLE_INDEX = 0x00
 const INCREMENT = 2
@@ -71,10 +71,19 @@ export class CPU {
     return (chunk1 << 8) + chunk2
   }
 
-  private decode (instruction: number): void {
+  private decode (instruction: number): Instruction {
     /**
-     * We need to determine, based off of the byte data, what instruction should be performed
+     * We need to determine, based off of the byte data, what instruction should be performed.
+     * For this, we'll use the decoder util
      */
+    return decode(instruction)
+  }
+
+  private execute (operationData: Instruction): void {
+    /**
+     * Finally, we execute the operatin returned by the decoder
+     */
+    operationData.operation()
   }
 
   private increment (amount: number): void {
@@ -89,9 +98,11 @@ export class CPU {
       const address: number = this._programCounter[SINGLE_INDEX]
       const instruction: number = this.fetch()
 
-      console.log(`LINE ${address}: ${instruction.toString(16)}`)
+      const operationData = this.decode(instruction)
 
-      // this.decode(instruction)
+      console.log(`LINE ${address}: ${instruction.toString(16)} - ${operationData.operation.toString()}`)
+
+      this.execute(operationData)
     }
 
     console.log('Program Exited')

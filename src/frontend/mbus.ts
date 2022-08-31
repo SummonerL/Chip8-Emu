@@ -75,9 +75,6 @@ export class MemoryBus {
       }
     })
 
-    // log the data from 0x200 -> Last address
-    console.log(this.memory.subarray(PROGRAM_START_ADDRESS, this.programLastAddress + 1))
-
     // set the program counter to 0x200
     CPU.instance.programCounter = PROGRAM_START_ADDRESS
 
