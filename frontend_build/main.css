@@ -1,5 +1,14 @@
-#display {
-    border: solid 1px #000;
+#chip8Display {
     width: 640px;
     height: 320px;
+}
+
+.pixel {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+}
+
+.pixel .on {
+    background-color: #000;
 }

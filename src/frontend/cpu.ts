@@ -2,9 +2,10 @@
  * The Chip8 CPU - The brain of the emulator
  */
 
-import { MemoryBus } from '.'
+import { MemoryBus, Screen } from '.'
 
 const SINGLE_INDEX = 0x00
+const INCREMENT = 2
 
 export class CPU {
   private static _instance: CPU
@@ -33,7 +34,10 @@ export class CPU {
   // same as the delay timer. Emits a single tone as long as the value is non-Zero
   private readonly soundTimer: Uint8Array = new Uint8Array(0x01)
 
-  private constructor () { }
+  private constructor () {
+    // initialize screen Singleton
+    console.log(Screen.instance.created)
+  }
 
   static get instance (): CPU {
     if (CPU._instance === undefined) {
@@ -51,18 +55,30 @@ export class CPU {
     this._programCounter[SINGLE_INDEX] = address
   }
 
-  private fetch (): string {
-    const part1: string = MemoryBus.instance.memory[this._programCounter[SINGLE_INDEX]].toString(16)
-    const part2: string = MemoryBus.instance.memory[this._programCounter[SINGLE_INDEX] + 1].toString(16)
-    return part1 + part2
+  private fetch (): number {
+    const memory = MemoryBus.instance.memory
+
+    const chunk1: number = memory[this._programCounter[SINGLE_INDEX]]
+    const chunk2: number = memory[this._programCounter[SINGLE_INDEX] + 1]
+
+    this.increment(INCREMENT)
+
+    /**
+     *  We'll need to bit-shift the first chunk, so that it's not calculated as a 2-digit Hex
+     *  For example: 0xA22A = 41514, but 0xA2 = 162. Therefore, 0xA2 + 0x2A != 0xA22A.
+     *  Bit-shifting the first chunk will result in 0xA200 + 0x2A, which is what we want
+     * */
+    return (chunk1 << 8) + chunk2
   }
 
   private decode (instruction: number): void {
-    //
+    /**
+     * We need to determine, based off of the byte data, what instruction should be performed
+     */
   }
 
-  private increment (): void {
-    this._programCounter[SINGLE_INDEX] += 2
+  private increment (amount: number): void {
+    this._programCounter[SINGLE_INDEX] += amount
   }
 
   public cycle (): void {
@@ -71,14 +87,11 @@ export class CPU {
     while (this._programCounter[SINGLE_INDEX] <= MemoryBus.instance.programLastAddress) {
       // instruction
       const address: number = this._programCounter[SINGLE_INDEX]
-      const instruction: string = this.fetch()
+      const instruction: number = this.fetch()
 
-      console.log(`LINE ${address}: ${instruction}`)
+      console.log(`LINE ${address}: ${instruction.toString(16)}`)
 
       // this.decode(instruction)
-
-      // increment by 2
-      this.increment()
     }
 
     console.log('Program Exited')
