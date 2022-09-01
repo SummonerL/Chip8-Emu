@@ -79,7 +79,7 @@ export class MemoryBus {
     CPU.instance.programCounter = PROGRAM_START_ADDRESS
 
     // start cycling the CPU
-    CPU.instance.cycle()
+    void CPU.instance.cycle()
 
     return true
   }

@@ -6,6 +6,7 @@ import { MemoryBus, Screen, decode, Instruction } from '.'
 
 const SINGLE_INDEX = 0x00
 const INCREMENT = 2
+const CLOCK_CYCLE_TIME = 50 // in ms
 
 export class CPU {
   private static _instance: CPU
@@ -71,6 +72,10 @@ export class CPU {
     this.registers[register] += value
   }
 
+  public getRegister (register: number): number {
+    return this.registers[register]
+  }
+
   private fetch (): number {
     const memory = MemoryBus.instance.memory
 
@@ -106,7 +111,7 @@ export class CPU {
     this._programCounter[SINGLE_INDEX] += amount
   }
 
-  public cycle (): void {
+  public async cycle (): Promise<any> {
     console.log('Begin Cycling...')
 
     while (this._programCounter[SINGLE_INDEX] <= MemoryBus.instance.programLastAddress) {
@@ -119,6 +124,8 @@ export class CPU {
       console.log(`LINE ${address}: ${instruction.toString(16)} - ${operationData.operation.toString()}`)
 
       this.execute(operationData)
+
+      await new Promise((resolve) => setTimeout(resolve, CLOCK_CYCLE_TIME))
     }
 
     console.log('Program Exited')

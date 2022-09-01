@@ -50,6 +50,11 @@ export const decode = (instruction: number): Instruction => {
       instructionDecoded.operation = operations.setIndexRegister
       instructionDecoded.parameters.push(instruction & 0x0FFF)
       break
+    case 0xD:
+      // display / draw
+      instructionDecoded.operation = operations.displayDraw
+      instructionDecoded.parameters = [secondNibble, thirdNibble, fourthNibble]
+      break
   }
 
   return instructionDecoded
