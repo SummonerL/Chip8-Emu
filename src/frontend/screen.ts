@@ -55,7 +55,8 @@ export class Screen {
         // get the pixel from the binary value of this sprite row (i.e. (1)1101110)
         const pixel = (spriteRow >> j) & 0x1
 
-        const pixelCancelled: boolean = this.setPixel(xCoordinate + i, yCoordinate + j, Boolean(pixel))
+        // because the pixels are read from right -> left, we need to start at the rightmost coordinate (hence the 7)
+        const pixelCancelled: boolean = this.setPixel(xCoordinate + (7 - j), yCoordinate + i, Boolean(pixel))
 
         // if the pixel at coordinates x,y are ON and the current pixel was cancelled, we need to set VF to 1
         if (pixelCancelled && startingPixelOn) {
@@ -75,7 +76,7 @@ export class Screen {
   // returns true if the pixel was turned OFF
   public setPixel (x: number, y: number, value: boolean): boolean {
     // get the linear value of these coordinates
-    const pixelNumber: number = (x * SCREEN_WIDTH) + y
+    const pixelNumber: number = (y * SCREEN_WIDTH) + x
 
     const pixelElement = this._pixels[pixelNumber]
     const currentValue: boolean = pixelElement.classList.contains('on')

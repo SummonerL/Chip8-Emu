@@ -6,7 +6,7 @@ import { MemoryBus, Screen, decode, Instruction } from '.'
 
 const SINGLE_INDEX = 0x00
 const INCREMENT = 2
-const CLOCK_CYCLE_TIME = 50 // in ms
+const CLOCK_CYCLE_TIME = 2 // in ms (roughly 500 Hz)
 
 export class CPU {
   private static _instance: CPU
@@ -116,12 +116,12 @@ export class CPU {
 
     while (this._programCounter[SINGLE_INDEX] <= MemoryBus.instance.programLastAddress) {
       // instruction
-      const address: number = this._programCounter[SINGLE_INDEX]
+      // const address: number = this._programCounter[SINGLE_INDEX]
       const instruction: number = this.fetch()
 
       const operationData = this.decode(instruction)
 
-      console.log(`LINE ${address}: ${instruction.toString(16)} - ${operationData.operation.toString()}`)
+      // console.log(`LINE ${address}: ${instruction.toString(16)} - ${operationData.operation.toString()}`)
 
       this.execute(operationData)
 
