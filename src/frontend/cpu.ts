@@ -14,7 +14,7 @@ export class CPU {
   private readonly registers: Uint8Array = new Uint8Array(0x10)
 
   // single 16-bit register which stores memory addresses (up to 0xFFF)
-  private readonly index: Uint16Array = new Uint16Array(0x01)
+  private readonly _index: Uint16Array = new Uint16Array(0x01)
 
   // single 16-bit register which stores address of current program instruction
   private readonly _programCounter: Uint16Array = new Uint16Array(0x01)
@@ -55,6 +55,22 @@ export class CPU {
     this._programCounter[SINGLE_INDEX] = address
   }
 
+  get index (): number {
+    return this._index[SINGLE_INDEX]
+  }
+
+  set index (address: number) {
+    this._index[SINGLE_INDEX] = address
+  }
+
+  public setRegister (register: number, value: number): void {
+    this.registers[register] = value
+  }
+
+  public addToRegister (register: number, value: number): void {
+    this.registers[register] += value
+  }
+
   private fetch (): number {
     const memory = MemoryBus.instance.memory
 
@@ -83,7 +99,7 @@ export class CPU {
     /**
      * Finally, we execute the operatin returned by the decoder
      */
-    operationData.operation()
+    operationData.operation.apply(this, operationData.parameters)
   }
 
   private increment (amount: number): void {
