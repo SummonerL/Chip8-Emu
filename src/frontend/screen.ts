@@ -75,7 +75,7 @@ export class Screen {
   // returns true if the pixel was turned OFF
   public setPixel (x: number, y: number, value: boolean): boolean {
     // get the linear value of these coordinates
-    const pixelNumber: number = (y * SCREEN_WIDTH) + x
+    const pixelNumber: number = (x * SCREEN_WIDTH) + y
 
     const pixelElement = this._pixels[pixelNumber]
     const currentValue: boolean = pixelElement.classList.contains('on')
