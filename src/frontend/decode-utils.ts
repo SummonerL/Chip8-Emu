@@ -51,6 +51,11 @@ export const decode = (instruction: number): Instruction => {
       instructionDecoded.operation = operations.skipIfNotEqual
       instructionDecoded.parameters = [secondNibble, instruction & 0x00FF]
       break
+    case 0x5:
+      // skip if registers are equal
+      instructionDecoded.operation = operations.skipIfRegistersEqual
+      instructionDecoded.parameters = [secondNibble, thirdNibble]
+      break
     case 0x6:
       // set register
       instructionDecoded.operation = operations.setRegister
@@ -60,6 +65,11 @@ export const decode = (instruction: number): Instruction => {
       // add to register
       instructionDecoded.operation = operations.addToRegister
       instructionDecoded.parameters = [secondNibble, instruction & 0x00FF]
+      break
+    case 0x9:
+      // skip if registers are not equal
+      instructionDecoded.operation = operations.skipIfRegistersNotEqual
+      instructionDecoded.parameters = [secondNibble, thirdNibble]
       break
     case 0xA:
       // set the index register (used by display/draw)

@@ -43,6 +43,20 @@ const skipIfNotEqual = (register: number, value: number): void => {
   }
 }
 
+const skipIfRegistersEqual = (firstRegister: number, secondRegister: number): void => {
+  if (CPU.instance.getRegister(firstRegister) === CPU.instance.getRegister(secondRegister)) {
+    // skip the next two-byte instruction
+    CPU.instance.increment(2)
+  }
+}
+
+const skipIfRegistersNotEqual = (firstRegister: number, secondRegister: number): void => {
+  if (CPU.instance.getRegister(firstRegister) !== CPU.instance.getRegister(secondRegister)) {
+    // skip the next two-byte instruction
+    CPU.instance.increment(2)
+  }
+}
+
 const setIndexRegister = (address: number): void => {
   CPU.instance.index = address
 }
@@ -86,6 +100,8 @@ export {
   addToRegister,
   skipIfEqual,
   skipIfNotEqual,
+  skipIfRegistersEqual,
+  skipIfRegistersNotEqual,
   setIndexRegister,
   displayDraw
 }
