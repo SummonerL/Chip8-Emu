@@ -21,7 +21,7 @@ export class CPU {
   private readonly _programCounter: Uint16Array = new Uint16Array(0x01)
 
   // used with the op CALL to store the address of the current instruction (PC)
-  // we will rely on this when the RET operation is executed to return to this address
+  // we will rely on this when the RET operation is executed to return to this address.
   // using this, we can essentially have a maximum of 16 nested subroutines
   private readonly callStack: Uint16Array = new Uint16Array(0x10)
 
@@ -38,6 +38,9 @@ export class CPU {
   private constructor () {
     // initialize screen Singleton
     console.log(Screen.instance.created)
+
+    // set the stack pointer to 0 (indicates the index of the top of the stack)
+    this.stackPointer[SINGLE_INDEX] = 0x0
   }
 
   static get instance (): CPU {
@@ -76,6 +79,25 @@ export class CPU {
     return this.registers[register]
   }
 
+  public pushToStack (address: number): void {
+    // push to the top of the call stack
+    this.callStack[this.stackPointer[SINGLE_INDEX]] = address
+
+    // increment the stack pointer
+    this.stackPointer[SINGLE_INDEX] += 1
+  }
+
+  public popFromStack (): number {
+    const poppedStackValue = this.callStack[this.stackPointer[SINGLE_INDEX]]
+
+    // decrement the stack pointer
+    if (this.stackPointer[SINGLE_INDEX] > 0x0) {
+      this.stackPointer[SINGLE_INDEX] -= 1
+    }
+
+    return poppedStackValue
+  }
+
   private fetch (): number {
     const memory = MemoryBus.instance.memory
 
@@ -107,7 +129,7 @@ export class CPU {
     operationData.operation.apply(this, operationData.parameters)
   }
 
-  private increment (amount: number): void {
+  public increment (amount: number): void {
     this._programCounter[SINGLE_INDEX] += amount
   }
 

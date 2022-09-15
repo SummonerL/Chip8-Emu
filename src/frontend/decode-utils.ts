@@ -25,8 +25,9 @@ export const decode = (instruction: number): Instruction => {
         case 0x0:
           instructionDecoded.operation = operations.clearScreen
           break
-        // return from subroutine
+        // return from subroutine (pop from stack and set PC)
         case 0xE:
+          instructionDecoded.operation = operations.returnFromSubroutine
           break
       }
       break
@@ -34,6 +35,21 @@ export const decode = (instruction: number): Instruction => {
       // jump to memory address (set PC)
       instructionDecoded.operation = operations.jumpAddress
       instructionDecoded.parameters.push(instruction & 0x0FFF)
+      break
+    case 0x2:
+      // call a subroutine (set PC and push to stack)
+      instructionDecoded.operation = operations.callSubroutine
+      instructionDecoded.parameters.push(instruction & 0x0FFF)
+      break
+    case 0x3:
+      // skip if equal
+      instructionDecoded.operation = operations.skipIfEqual
+      instructionDecoded.parameters = [secondNibble, instruction & 0x00FF]
+      break
+    case 0x4:
+      // skip if not equal
+      instructionDecoded.operation = operations.skipIfNotEqual
+      instructionDecoded.parameters = [secondNibble, instruction & 0x00FF]
       break
     case 0x6:
       // set register

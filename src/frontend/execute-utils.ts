@@ -10,12 +10,37 @@ const jumpAddress = (address: number): void => {
   CPU.instance.programCounter = address
 }
 
+const callSubroutine = (address: number): void => {
+  // first, push the current PC value to the stack so that it can be returned to
+  CPU.instance.pushToStack(CPU.instance.programCounter)
+
+  CPU.instance.programCounter = address
+}
+
+const returnFromSubroutine = (): void => {
+  CPU.instance.programCounter = CPU.instance.popFromStack()
+}
+
 const setRegister = (register: number, value: number): void => {
   CPU.instance.setRegister(register, value)
 }
 
 const addToRegister = (register: number, value: number): void => {
   CPU.instance.addToRegister(register, value)
+}
+
+const skipIfEqual = (register: number, value: number): void => {
+  if (CPU.instance.getRegister(register) === value) {
+    // skip the next two-byte instruction
+    CPU.instance.increment(2)
+  }
+}
+
+const skipIfNotEqual = (register: number, value: number): void => {
+  if (CPU.instance.getRegister(register) !== value) {
+    // skip the next two-byte instruction
+    CPU.instance.increment(2)
+  }
 }
 
 const setIndexRegister = (address: number): void => {
@@ -52,4 +77,15 @@ const displayDraw = (xRegister: number, yRegister: number, pixelHeight: number):
   }
 }
 
-export { clearScreen, jumpAddress, setRegister, addToRegister, setIndexRegister, displayDraw }
+export {
+  clearScreen,
+  jumpAddress,
+  callSubroutine,
+  returnFromSubroutine,
+  setRegister,
+  addToRegister,
+  skipIfEqual,
+  skipIfNotEqual,
+  setIndexRegister,
+  displayDraw
+}
