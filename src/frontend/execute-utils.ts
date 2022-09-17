@@ -10,6 +10,10 @@ const jumpAddress = (address: number): void => {
   CPU.instance.programCounter = address
 }
 
+const jumpAddressPlusV0 = (address: number): void => {
+  CPU.instance.programCounter = address + CPU.instance.getRegister(0x0)
+}
+
 const callSubroutine = (address: number): void => {
   // first, push the current PC value to the stack so that it can be returned to
   CPU.instance.pushToStack(CPU.instance.programCounter)
@@ -61,6 +65,12 @@ const setIndexRegister = (address: number): void => {
   CPU.instance.index = address
 }
 
+const generateRandom = (address: number, range: number): void => {
+  // generate number from 0 to range
+  const randomNumber = (Math.floor(Math.random() * 255) & range)
+  CPU.instance.setRegister(address, randomNumber)
+}
+
 const displayDraw = (xRegister: number, yRegister: number, pixelHeight: number): void => {
   // get the x and y coordinates from relevant registers
   const x = CPU.instance.getRegister(xRegister)
@@ -94,6 +104,7 @@ const displayDraw = (xRegister: number, yRegister: number, pixelHeight: number):
 export {
   clearScreen,
   jumpAddress,
+  jumpAddressPlusV0,
   callSubroutine,
   returnFromSubroutine,
   setRegister,
@@ -103,5 +114,6 @@ export {
   skipIfRegistersEqual,
   skipIfRegistersNotEqual,
   setIndexRegister,
+  generateRandom,
   displayDraw
 }

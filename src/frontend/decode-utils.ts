@@ -76,6 +76,16 @@ export const decode = (instruction: number): Instruction => {
       instructionDecoded.operation = operations.setIndexRegister
       instructionDecoded.parameters.push(instruction & 0x0FFF)
       break
+    case 0xB:
+      // jump to address + V0
+      instructionDecoded.operation = operations.jumpAddressPlusV0
+      instructionDecoded.parameters.push(instruction & 0x0FFF)
+      break
+    case 0xC:
+      // store random number from 0 to 0x00FF into VX
+      instructionDecoded.operation = operations.generateRandom
+      instructionDecoded.parameters = [secondNibble, instruction * 0x00FF]
+      break
     case 0xD:
       // display / draw
       instructionDecoded.operation = operations.displayDraw
