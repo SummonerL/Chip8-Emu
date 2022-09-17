@@ -30,8 +30,51 @@ const setRegister = (register: number, value: number): void => {
   CPU.instance.setRegister(register, value)
 }
 
+const loadIntoRegister = (firstRegister: number, secondRegister: number): void => {
+  CPU.instance.setRegister(firstRegister, CPU.instance.getRegister(secondRegister))
+}
+
 const addToRegister = (register: number, value: number): void => {
   CPU.instance.addToRegister(register, value)
+}
+
+const setRegisterToAdd = (firstRegister: number, secondRegister: number): void => {
+  const firstValue = CPU.instance.getRegister(firstRegister)
+  const secondValue = CPU.instance.getRegister(secondRegister)
+
+  // set VX to the sum of VX + VY
+  CPU.instance.setRegister(firstRegister, firstValue + secondValue)
+
+  // modify the carry flag (values > 255 set carry to 1)
+  if ((firstValue + secondValue) > 0xFF) {
+    CPU.instance.setRegister(0xF, 0x1)
+  } else {
+    CPU.instance.setRegister(0xF, 0x0)
+  }
+}
+
+const setRegisterBinaryOR = (firstRegister: number, secondRegister: number): void => {
+  const firstValue = CPU.instance.getRegister(firstRegister)
+  const secondValue = CPU.instance.getRegister(secondRegister)
+
+  // set VX to the binary OR of VX and VY
+  CPU.instance.setRegister(firstRegister, firstValue | secondValue)
+}
+
+const setRegisterBinaryAND = (firstRegister: number, secondRegister: number): void => {
+  const firstValue = CPU.instance.getRegister(firstRegister)
+  const secondValue = CPU.instance.getRegister(secondRegister)
+
+  // set VX to the binary AND of VX and VY
+  CPU.instance.setRegister(firstRegister, firstValue & secondValue)
+}
+
+const setRegisterBinaryXOR = (firstRegister: number, secondRegister: number): void => {
+  const firstValue = CPU.instance.getRegister(firstRegister)
+  const secondValue = CPU.instance.getRegister(secondRegister)
+
+  // set VX to the binary XOR of VX and VY
+  CPU.instance.setRegister(firstRegister, firstValue ^ secondValue)
 }
 
 const skipIfEqual = (register: number, value: number): void => {
@@ -123,7 +166,12 @@ export {
   callSubroutine,
   returnFromSubroutine,
   setRegister,
+  loadIntoRegister,
+  setRegisterBinaryOR,
+  setRegisterBinaryAND,
+  setRegisterBinaryXOR,
   addToRegister,
+  setRegisterToAdd,
   skipIfEqual,
   skipIfNotEqual,
   skipIfRegistersEqual,

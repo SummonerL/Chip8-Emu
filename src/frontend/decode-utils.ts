@@ -66,6 +66,34 @@ export const decode = (instruction: number): Instruction => {
       instructionDecoded.operation = operations.addToRegister
       instructionDecoded.parameters = [secondNibble, instruction & 0x00FF]
       break
+    case 0x8:
+      switch (fourthNibble) {
+        case 0x0:
+          // set load value of register into another
+          instructionDecoded.operation = operations.loadIntoRegister
+          instructionDecoded.parameters = [secondNibble, thirdNibble]
+          break
+        case 0x1:
+          // binary OR
+          instructionDecoded.operation = operations.setRegisterBinaryOR
+          instructionDecoded.parameters = [secondNibble, thirdNibble]
+          break
+        case 0x2:
+          // binary AND
+          instructionDecoded.operation = operations.setRegisterBinaryAND
+          instructionDecoded.parameters = [secondNibble, thirdNibble]
+          break
+        case 0x3:
+          // binary XOR
+          instructionDecoded.operation = operations.setRegisterBinaryXOR
+          instructionDecoded.parameters = [secondNibble, thirdNibble]
+          break
+        case 0x4:
+          // add registers
+          instructionDecoded.operation = operations.setRegisterToAdd
+          instructionDecoded.parameters = [secondNibble, thirdNibble]
+      }
+      break
     case 0x9:
       // skip if registers are not equal
       instructionDecoded.operation = operations.skipIfRegistersNotEqual
