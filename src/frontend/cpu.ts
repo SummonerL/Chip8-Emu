@@ -2,7 +2,7 @@
  * The Chip8 CPU - The brain of the emulator
  */
 
-import { MemoryBus, Screen, decode, Instruction } from '.'
+import { MemoryBus, Screen, decode, Instruction, Keyboard } from '.'
 
 const SINGLE_INDEX = 0x00
 const INCREMENT = 2
@@ -38,6 +38,9 @@ export class CPU {
   private constructor () {
     // initialize screen Singleton
     console.log(Screen.instance.created)
+
+    // initialize keyboard Singleton
+    console.log(Keyboard.instance.created)
 
     // set the stack pointer to 0 (indicates the index of the top of the stack)
     this.stackPointer[SINGLE_INDEX] = 0x0

@@ -1,6 +1,7 @@
 import { Screen } from './screen'
 import { CPU } from './cpu'
 import { MemoryBus } from './mbus'
+import { Keyboard } from './keyboard'
 
 const clearScreen = (): void => {
   Screen.instance.clearDisplay()
@@ -71,6 +72,20 @@ const generateRandom = (address: number, range: number): void => {
   CPU.instance.setRegister(address, randomNumber)
 }
 
+const skipIfKeyPressed = (key: number): void => {
+  if (Keyboard.instance.isPressed(key)) {
+    // skip the next two-byte instruction
+    CPU.instance.increment(2)
+  }
+}
+
+const skipIfKeyNotPressed = (key: number): void => {
+  if (!Keyboard.instance.isPressed(key)) {
+    // skip the next two-byte instruction
+    CPU.instance.increment(2)
+  }
+}
+
 const displayDraw = (xRegister: number, yRegister: number, pixelHeight: number): void => {
   // get the x and y coordinates from relevant registers
   const x = CPU.instance.getRegister(xRegister)
@@ -115,5 +130,7 @@ export {
   skipIfRegistersNotEqual,
   setIndexRegister,
   generateRandom,
+  skipIfKeyPressed,
+  skipIfKeyNotPressed,
   displayDraw
 }

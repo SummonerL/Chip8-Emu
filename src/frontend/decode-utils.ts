@@ -91,6 +91,20 @@ export const decode = (instruction: number): Instruction => {
       instructionDecoded.operation = operations.displayDraw
       instructionDecoded.parameters = [secondNibble, thirdNibble, fourthNibble]
       break
+    case 0xE:
+      switch (instruction & 0x00FF) {
+        // skip instruction if key is pressed
+        case 0x9E:
+          instructionDecoded.operation = operations.skipIfKeyPressed
+          instructionDecoded.parameters.push(secondNibble)
+          break
+        // skip instruction if key is not pressed
+        case 0xA1:
+          instructionDecoded.operation = operations.skipIfKeyNotPressed
+          instructionDecoded.parameters.push(secondNibble)
+          break
+      }
+      break
   }
 
   return instructionDecoded
