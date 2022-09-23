@@ -100,6 +100,8 @@ export const decode = (instruction: number): Instruction => {
           break
         case 0x6:
           // shift VX 1 bit to the right
+          instructionDecoded.operation = operations.setRegisterToRightShift
+          instructionDecoded.parameters = [secondNibble]
           break
         case 0x7:
           // subtract VY - VX

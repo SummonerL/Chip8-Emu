@@ -71,13 +71,24 @@ const setRegisterToSubtract = (firstRegister: number, secondRegister: number): v
 const setRegisterToLeftShift = (register: number): void => {
   const registerValue = CPU.instance.getRegister(register)
 
-  // set VX to first register value shifted once to the left
+  // set VX to register value shifted once to the left
   CPU.instance.setRegister(register, registerValue << 0x1)
 
   // set VF to the most significant (leftmost) bit, assuming an 8 bit value.
   // In other words, the value has to be greater than 128 (1000000) for the MSB to be 1
-  // mask off the leftmost bit (remember, this is binary) and shift right 7 bits.
+  // mask off the leftmost bit (remember, this is binary, 0x80 would be the leftmost) and shift right 7 bits.
   CPU.instance.setRegister(0xF, (registerValue & 0x80) >> 0x7)
+}
+
+const setRegisterToRightShift = (register: number): void => {
+  const registerValue = CPU.instance.getRegister(register)
+
+  // set VX to register value shifted once to the right
+  CPU.instance.setRegister(register, registerValue >> 0x1)
+
+  // set VF to the least significant (rightmost) bit, assuming an 8 bit value.
+  // mask off the rightmost bit
+  CPU.instance.setRegister(0xF, (registerValue & 0x1))
 }
 
 const setRegisterBinaryOR = (firstRegister: number, secondRegister: number): void => {
@@ -201,6 +212,7 @@ export {
   setRegisterToAdd,
   setRegisterToSubtract,
   setRegisterToLeftShift,
+  setRegisterToRightShift,
   skipIfEqual,
   skipIfNotEqual,
   skipIfRegistersEqual,
