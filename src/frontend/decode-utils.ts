@@ -92,6 +92,25 @@ export const decode = (instruction: number): Instruction => {
           // add registers
           instructionDecoded.operation = operations.setRegisterToAdd
           instructionDecoded.parameters = [secondNibble, thirdNibble]
+          break
+        case 0x5:
+          // subtract VX - VY
+          instructionDecoded.operation = operations.setRegisterToSubtract
+          instructionDecoded.parameters = [secondNibble, thirdNibble]
+          break
+        case 0x6:
+          // shift VX 1 bit to the right
+          break
+        case 0x7:
+          // subtract VY - VX
+          instructionDecoded.operation = operations.setRegisterToSubtract
+          instructionDecoded.parameters = [thirdNibble, secondNibble]
+          break
+        case 0xE:
+          // shift VX 1 bit to the left
+          instructionDecoded.operation = operations.setRegisterToLeftShift
+          instructionDecoded.parameters = [secondNibble]
+          break
       }
       break
     case 0x9:

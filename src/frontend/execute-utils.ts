@@ -53,6 +53,33 @@ const setRegisterToAdd = (firstRegister: number, secondRegister: number): void =
   }
 }
 
+const setRegisterToSubtract = (firstRegister: number, secondRegister: number): void => {
+  const firstValue = CPU.instance.getRegister(firstRegister)
+  const secondValue = CPU.instance.getRegister(secondRegister)
+
+  // set VX to first register - second register
+  CPU.instance.setRegister(firstRegister, firstValue - secondValue)
+
+  // modify the carry flag
+  if (firstValue > secondValue) {
+    CPU.instance.setRegister(0xF, 0x1)
+  } else {
+    CPU.instance.setRegister(0xF, 0x0)
+  }
+}
+
+const setRegisterToLeftShift = (register: number): void => {
+  const registerValue = CPU.instance.getRegister(register)
+
+  // set VX to first register value shifted once to the left
+  CPU.instance.setRegister(register, registerValue << 0x1)
+
+  // set VF to the most significant (leftmost) bit, assuming an 8 bit value.
+  // In other words, the value has to be greater than 128 (1000000) for the MSB to be 1
+  // mask off the leftmost bit (remember, this is binary) and shift right 7 bits.
+  CPU.instance.setRegister(0xF, (registerValue & 0x80) >> 0x7)
+}
+
 const setRegisterBinaryOR = (firstRegister: number, secondRegister: number): void => {
   const firstValue = CPU.instance.getRegister(firstRegister)
   const secondValue = CPU.instance.getRegister(secondRegister)
@@ -172,6 +199,8 @@ export {
   setRegisterBinaryXOR,
   addToRegister,
   setRegisterToAdd,
+  setRegisterToSubtract,
+  setRegisterToLeftShift,
   skipIfEqual,
   skipIfNotEqual,
   skipIfRegistersEqual,
