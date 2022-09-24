@@ -2,7 +2,6 @@
  * The Chip8 CPU - The brain of the emulator
  */
 
-import { clearInterval } from 'timers'
 import { MemoryBus, Screen, decode, Instruction, Keyboard } from '.'
 
 const SINGLE_INDEX = 0x00
@@ -162,7 +161,7 @@ export class CPU {
     console.log('Begin Cycling...')
 
     // decrement timers at a rate of 60Hz (60 times per second)
-    const clockInterval: NodeJS.Timer = setInterval(() => {
+    const clockInterval = setInterval(() => {
       if (this._delayTimer[SINGLE_INDEX] > 0x0) {
         this._delayTimer[SINGLE_INDEX] -= 0x1
       }
