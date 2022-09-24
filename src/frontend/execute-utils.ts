@@ -202,6 +202,16 @@ const waitForKey = (address: number): void => {
   }
 }
 
+const binaryDecimalConversion = (address: number): void => {
+  // convert the number in VX to three decimal digits, and store the subsequent values in (index address + ...)
+  // I.E 156 would become 1, 5 and 6
+  const registerValue = CPU.instance.getRegister(address)
+  const indexAddress = CPU.instance.index
+  registerValue.toString().split('').forEach((digit, index) => {
+    MemoryBus.instance.setMemoryAddress(indexAddress + index, parseInt(digit))
+  })
+}
+
 const displayDraw = (xRegister: number, yRegister: number, pixelHeight: number): void => {
   // get the x and y coordinates from relevant registers
   const x = CPU.instance.getRegister(xRegister)
@@ -262,5 +272,6 @@ export {
   skipIfKeyPressed,
   skipIfKeyNotPressed,
   waitForKey,
+  binaryDecimalConversion,
   displayDraw
 }

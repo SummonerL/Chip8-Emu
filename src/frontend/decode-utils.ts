@@ -186,6 +186,11 @@ export const decode = (instruction: number): Instruction => {
           instructionDecoded.operation = operations.setIndexToFontAddress
           instructionDecoded.parameters.push(secondNibble)
           break
+        case 0x33:
+          // binary decimal conversion
+          instructionDecoded.operation = operations.binaryDecimalConversion
+          instructionDecoded.parameters.push(secondNibble)
+          break
       }
       break
     default:
