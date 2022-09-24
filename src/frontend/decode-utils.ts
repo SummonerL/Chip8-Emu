@@ -154,6 +154,37 @@ export const decode = (instruction: number): Instruction => {
           break
       }
       break
+    case 0xF:
+      switch (instruction & 0x00FF) {
+        case 0x07:
+          // set VX to the value of the delay timer
+          instructionDecoded.operation = operations.setRegisterToDelayTimer
+          instructionDecoded.parameters.push(secondNibble)
+          break
+        case 0x0A:
+          // block execution until key is pressed
+          instructionDecoded.operation = operations.waitForKey
+          instructionDecoded.parameters.push(secondNibble)
+          break
+        case 0x15:
+          // set the delay timer to value in VX
+          instructionDecoded.operation = operations.setDelayTimerToRegisterValue
+          instructionDecoded.parameters.push(secondNibble)
+          break
+        case 0x18:
+          // set the sound timer to value in VX
+          instructionDecoded.operation = operations.setSoundTimerToRegisterValue
+          instructionDecoded.parameters.push(secondNibble)
+          break
+        case 0x1E:
+          // add to Index
+          instructionDecoded.operation = operations.addToIndexRegister
+          instructionDecoded.parameters.push(secondNibble)
+          break
+      }
+      break
+    default:
+      throw new Error(`Execution failed with instruction ${instruction.toString(16)}`)
   }
 
   return instructionDecoded

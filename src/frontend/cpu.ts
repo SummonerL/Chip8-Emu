@@ -2,11 +2,13 @@
  * The Chip8 CPU - The brain of the emulator
  */
 
+import { clearInterval } from 'timers'
 import { MemoryBus, Screen, decode, Instruction, Keyboard } from '.'
 
 const SINGLE_INDEX = 0x00
 const INCREMENT = 2
-const CLOCK_CYCLE_TIME = 2 // in ms (roughly 500 Hz)
+const CPU_CYCLE_TIME = 2 // in ms (roughly 500 Hz)
+const TIMER_CYCLE_TIME = 16.67
 
 export class CPU {
   private static _instance: CPU
@@ -30,10 +32,10 @@ export class CPU {
   private readonly stackPointer: Uint8Array = new Uint8Array(0x01)
 
   // inactive when at 0. Otherwise, the value will decrement at a rate of 60hz (roughly 16.6 ms)
-  private readonly delayTimer: Uint8Array = new Uint8Array(0x01)
+  private readonly _delayTimer: Uint8Array = new Uint8Array(0x01)
 
   // same as the delay timer. Emits a single tone as long as the value is non-Zero
-  private readonly soundTimer: Uint8Array = new Uint8Array(0x01)
+  private readonly _soundTimer: Uint8Array = new Uint8Array(0x01)
 
   private constructor () {
     // initialize screen Singleton
@@ -44,6 +46,10 @@ export class CPU {
 
     // set the stack pointer to 0 (indicates the index of the top of the stack)
     this.stackPointer[SINGLE_INDEX] = 0x0
+
+    // set the timers to 0
+    this._delayTimer[SINGLE_INDEX] = 0x0
+    this._delayTimer[SINGLE_INDEX] = 0x0
   }
 
   static get instance (): CPU {
@@ -68,6 +74,22 @@ export class CPU {
 
   set index (address: number) {
     this._index[SINGLE_INDEX] = address
+  }
+
+  get delayTimer (): number {
+    return this._delayTimer[SINGLE_INDEX]
+  }
+
+  set delayTimer (value: number) {
+    this._delayTimer[SINGLE_INDEX] = value
+  }
+
+  get soundTimer (): number {
+    return this._soundTimer[SINGLE_INDEX]
+  }
+
+  set soundTimer (value: number) {
+    this._soundTimer[SINGLE_INDEX] = value
   }
 
   public setRegister (register: number, value: number): void {
@@ -139,6 +161,18 @@ export class CPU {
   public async cycle (): Promise<any> {
     console.log('Begin Cycling...')
 
+    // decrement timers at a rate of 60Hz (60 times per second)
+    const clockInterval: NodeJS.Timer = setInterval(() => {
+      if (this._delayTimer[SINGLE_INDEX] > 0x0) {
+        this._delayTimer[SINGLE_INDEX] -= 0x1
+      }
+
+      if (this._soundTimer[SINGLE_INDEX] > 0x0) {
+        this._soundTimer[SINGLE_INDEX] -= 0x1
+      }
+    }, TIMER_CYCLE_TIME)
+
+    // cpu cycle
     while (this._programCounter[SINGLE_INDEX] <= MemoryBus.instance.programLastAddress) {
       // instruction
       // const address: number = this._programCounter[SINGLE_INDEX]
@@ -150,8 +184,11 @@ export class CPU {
 
       this.execute(operationData)
 
-      await new Promise((resolve) => setTimeout(resolve, CLOCK_CYCLE_TIME))
+      await new Promise((resolve) => setTimeout(resolve, CPU_CYCLE_TIME))
     }
+
+    // stop decrementing timers
+    clearInterval(clockInterval)
 
     console.log('Program Exited')
   }

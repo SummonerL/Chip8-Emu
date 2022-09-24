@@ -57,6 +57,10 @@ export class Keyboard {
     return (this.keysPressed[key] === 0x1)
   }
 
+  public getLastPressed (): number {
+    return this.keysPressed.lastIndexOf(0x1)
+  }
+
   get created (): string {
     return 'Keyboard Initialized...'
   }

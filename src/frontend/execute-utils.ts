@@ -115,6 +115,18 @@ const setRegisterBinaryXOR = (firstRegister: number, secondRegister: number): vo
   CPU.instance.setRegister(firstRegister, firstValue ^ secondValue)
 }
 
+const setRegisterToDelayTimer = (register: number): void => {
+  CPU.instance.setRegister(register, CPU.instance.delayTimer)
+}
+
+const setDelayTimerToRegisterValue = (register: number): void => {
+  CPU.instance.delayTimer = CPU.instance.getRegister(register)
+}
+
+const setSoundTimerToRegisterValue = (register: number): void => {
+  CPU.instance.soundTimer = CPU.instance.getRegister(register)
+}
+
 const skipIfEqual = (register: number, value: number): void => {
   if (CPU.instance.getRegister(register) === value) {
     // skip the next two-byte instruction
@@ -147,6 +159,11 @@ const setIndexRegister = (address: number): void => {
   CPU.instance.index = address
 }
 
+const addToIndexRegister = (address: number): void => {
+  // add value of address to index register
+  CPU.instance.index += CPU.instance.getRegister(address)
+}
+
 const generateRandom = (address: number, range: number): void => {
   // generate number from 0 to range
   const randomNumber = (Math.floor(Math.random() * 255) & range)
@@ -164,6 +181,18 @@ const skipIfKeyNotPressed = (key: number): void => {
   if (!Keyboard.instance.isPressed(key)) {
     // skip the next two-byte instruction
     CPU.instance.increment(2)
+  }
+}
+
+const waitForKey = (address: number): void => {
+  // decrement PC by 2 unless key is pressed.
+  // if pressed, store key index in VX
+  const keyValue = Keyboard.instance.getLastPressed()
+
+  if (keyValue >= 0x0) {
+    CPU.instance.setRegister(address, keyValue)
+  } else {
+    CPU.instance.increment(-2)
   }
 }
 
@@ -213,13 +242,18 @@ export {
   setRegisterToSubtract,
   setRegisterToLeftShift,
   setRegisterToRightShift,
+  setRegisterToDelayTimer,
+  setDelayTimerToRegisterValue,
+  setSoundTimerToRegisterValue,
   skipIfEqual,
   skipIfNotEqual,
   skipIfRegistersEqual,
   skipIfRegistersNotEqual,
   setIndexRegister,
+  addToIndexRegister,
   generateRandom,
   skipIfKeyPressed,
   skipIfKeyNotPressed,
+  waitForKey,
   displayDraw
 }
