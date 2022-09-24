@@ -112,14 +112,12 @@ export class CPU {
   }
 
   public popFromStack (): number {
-    const poppedStackValue = this.callStack[this.stackPointer[SINGLE_INDEX]]
-
     // decrement the stack pointer
     if (this.stackPointer[SINGLE_INDEX] > 0x0) {
       this.stackPointer[SINGLE_INDEX] -= 1
     }
 
-    return poppedStackValue
+    return this.callStack[this.stackPointer[SINGLE_INDEX]]
   }
 
   private fetch (): number {
