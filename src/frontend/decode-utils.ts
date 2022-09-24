@@ -181,6 +181,11 @@ export const decode = (instruction: number): Instruction => {
           instructionDecoded.operation = operations.addToIndexRegister
           instructionDecoded.parameters.push(secondNibble)
           break
+        case 0x29:
+          // set index to font address
+          instructionDecoded.operation = operations.setIndexToFontAddress
+          instructionDecoded.parameters.push(secondNibble)
+          break
       }
       break
     default:

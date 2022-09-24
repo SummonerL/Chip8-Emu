@@ -63,6 +63,11 @@ export class MemoryBus {
     this._programLastAddress = address
   }
 
+  public getFontAddress (character: number): number {
+    // retrieve the starting address of the provided character
+    return FONTSET_START_ADDRESS + (character * 5) // each font sprite has 5 bytes
+  }
+
   // load program into memory
   public loadProgram (buffer: Uint8Array): boolean {
     buffer.forEach((byte: number, index: number) => {

@@ -164,6 +164,12 @@ const addToIndexRegister = (address: number): void => {
   CPU.instance.index += CPU.instance.getRegister(address)
 }
 
+const setIndexToFontAddress = (address: number): void => {
+  // VX contains a single hexadecimal character that we want to retrieve the font sprite for
+  const character = CPU.instance.getRegister(address)
+  CPU.instance.index = MemoryBus.instance.getFontAddress(character)
+}
+
 const generateRandom = (address: number, range: number): void => {
   // generate number from 0 to range
   const randomNumber = (Math.floor(Math.random() * 255) & range)
@@ -251,6 +257,7 @@ export {
   skipIfRegistersNotEqual,
   setIndexRegister,
   addToIndexRegister,
+  setIndexToFontAddress,
   generateRandom,
   skipIfKeyPressed,
   skipIfKeyNotPressed,
