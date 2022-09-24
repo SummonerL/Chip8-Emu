@@ -191,6 +191,16 @@ export const decode = (instruction: number): Instruction => {
           instructionDecoded.operation = operations.binaryDecimalConversion
           instructionDecoded.parameters.push(secondNibble)
           break
+        case 0x55:
+          // store into memory
+          instructionDecoded.operation = operations.storeIntoMemory
+          instructionDecoded.parameters.push(secondNibble)
+          break
+        case 0x65:
+          // read from memory
+          instructionDecoded.operation = operations.readFromMemory
+          instructionDecoded.parameters.push(secondNibble)
+          break
       }
       break
     default:

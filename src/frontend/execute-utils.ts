@@ -212,6 +212,23 @@ const binaryDecimalConversion = (address: number): void => {
   })
 }
 
+const storeIntoMemory = (address: number): void => {
+  // store the contents of V0...VX into the index + ... addresses
+  const indexAddress = CPU.instance.index
+  for (let i = 0x0; i <= address; ++i) {
+    MemoryBus.instance.setMemoryAddress(indexAddress + i, CPU.instance.getRegister(i))
+  }
+}
+
+const readFromMemory = (address: number): void => {
+  // load the contents of index + ... into registers V0...VX
+  const indexAddress = CPU.instance.index
+  for (let i = 0x0; i <= address; ++i) {
+    CPU.instance.setRegister(i, MemoryBus.instance.getMemoryAddress(indexAddress + i))
+    MemoryBus.instance.setMemoryAddress(indexAddress + i, CPU.instance.getRegister(i))
+  }
+}
+
 const displayDraw = (xRegister: number, yRegister: number, pixelHeight: number): void => {
   // get the x and y coordinates from relevant registers
   const x = CPU.instance.getRegister(xRegister)
@@ -273,5 +290,7 @@ export {
   skipIfKeyNotPressed,
   waitForKey,
   binaryDecimalConversion,
+  storeIntoMemory,
+  readFromMemory,
   displayDraw
 }

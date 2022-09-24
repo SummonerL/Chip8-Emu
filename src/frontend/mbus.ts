@@ -63,6 +63,10 @@ export class MemoryBus {
     this._programLastAddress = address
   }
 
+  public getMemoryAddress (address: number): number {
+    return this.memory[address]
+  }
+
   public setMemoryAddress (address: number, value: number): void {
     this.memory[address] = value
   }
